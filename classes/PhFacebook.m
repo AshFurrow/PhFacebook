@@ -59,6 +59,7 @@
         [defaults setObject: token.permissions forKey: kFBStoreAccessPermissions];
 
         [result setObject: [NSNumber numberWithBool: YES] forKey: @"valid"];
+        [result setObject:token forKey:@"token"];
     }
     else
     {
@@ -85,6 +86,17 @@
     [defaults removeObjectForKey:kFBStoreAccessToken];
     [defaults removeObjectForKey: kFBStoreTokenExpiry];
     [defaults removeObjectForKey: kFBStoreAccessPermissions];
+    
+    NSURL *facebookUrl = [NSURL URLWithString:@"http://facebook.com"];
+    NSURL *facebookSecureUrl = [NSURL URLWithString:@"https://facebook.com"];
+    
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    NSArray *cookies = [[cookieStorage cookiesForURL:facebookUrl] arrayByAddingObjectsFromArray:[cookieStorage cookiesForURL:facebookSecureUrl]];
+    
+    for (NSHTTPCookie *cookie in cookies)
+    {
+        [cookieStorage deleteCookie:cookie];
+    }
 }
 
 - (void) setAccessToken: (NSString*) accessToken expires: (NSTimeInterval) tokenExpires permissions: (NSString*) perms
